@@ -140,15 +140,29 @@
 
         const hold = { v: 0 };
 
-        // Timeline maestro, BLOQUEADO (pin) y dirigido por scroll (scrub).
-        // Mientras esta pineado, la rueda avanza el ensamblaje; el texto del paso
-        // se queda quieto y solo se desbloquea cuando ese paso termina.
+        // FASE 1 — ENTRADA (sin pin): mientras la seccion sube a la pantalla, la base
+        // cae y aparece el texto del Paso 1. Asi, apenas la seccion llena la pantalla,
+        // YA hay contenido y no queda esa zona vacia que parecia "fin de pagina".
+        gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: '#section-assembly',
+            start: 'top bottom',   // desde que asoma por abajo
+            end: 'top top',        // hasta quedar alineada arriba (justo antes del pin)
+            scrub: 1
+          }
+        })
+          .to(parts.base.position, { y: 0, ease: 'power2.out' }, 0)
+          .to('.astep-relieve', { autoAlpha: 1 }, 0.45);
+
+        // FASE 2 — PIN (armado): la seccion se bloquea y la rueda arma el resto:
+        // el relieve se ensambla, transicion, y la ruta corona con fade suave.
         const master = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
             trigger: '#section-assembly',
             start: 'top top',
-            end: '+=2450',
+            end: '+=2000',
             pin: '.assembly-pin',
             pinSpacing: true,
             scrub: 1,
@@ -164,21 +178,18 @@
         });
 
         master
-          // ESTADO BASE: la base cae y se posiciona — arranque mas corto (0.8 en vez de 1.4)
-          .to(parts.base.position, { y: 0, duration: 0.8, ease: 'power2.out' }, 0.0)
-          // ESTADO RELIEVE: entra el texto y el terreno se ensambla sobre la base
-          .to('.astep-relieve', { autoAlpha: 1, duration: 0.5 }, 0.5)
-          .to(parts.relieve.position, { y: 0, duration: 1.3, ease: 'power2.out' }, 0.8)
-          // (hueco 2.1 -> 3.7 = lectura del paso 1, todo quieto)
+          // el terreno se ensambla sobre la base (que ya cayo en la fase de entrada)
+          .to(parts.relieve.position, { y: 0, duration: 1.3, ease: 'power2.out' }, 0.0)
+          // (hueco 1.3 -> 2.5 = lectura del paso 1, todo quieto)
           // TRANSICION suave a RUTA: sale texto, el modelo se desliza a la derecha, entra texto
-          .to('.astep-relieve', { autoAlpha: 0, duration: 0.5 }, 3.7)
-          .fromTo(root.position, { x: () => LEFT_X }, { x: () => RIGHT_X, duration: 1.3, ease: 'power2.inOut' }, 3.8)
-          .to('.astep-ruta', { autoAlpha: 1, duration: 0.6 }, 4.7)
+          .to('.astep-relieve', { autoAlpha: 0, duration: 0.5 }, 2.5)
+          .fromTo(root.position, { x: () => LEFT_X }, { x: () => RIGHT_X, duration: 1.3, ease: 'power2.inOut' }, 2.6)
+          .to('.astep-ruta', { autoAlpha: 1, duration: 0.6 }, 3.5)
           // ESTADO RUTA: la ruta aparece con FADE-IN suave + asentamiento (sin brinco)
-          .to(mats.ruta, { opacity: 1, duration: 1.9, ease: 'power1.inOut' }, 5.3)
-          .fromTo(parts.ruta.position, { y: 34 }, { y: 0, duration: 1.9, ease: 'power2.out' }, 5.3)
+          .to(mats.ruta, { opacity: 1, duration: 1.9, ease: 'power1.inOut' }, 4.0)
+          .fromTo(parts.ruta.position, { y: 34 }, { y: 0, duration: 1.9, ease: 'power2.out' }, 4.0)
           // (hold final = lectura del paso 2 con todo armado)
-          .to(hold, { v: 1, duration: 2.2 }, 7.2);
+          .to(hold, { v: 1, duration: 1.8 }, 5.9);
       }
 
       // Interaccion: tilt suave con el mouse (sin giro automatico)

@@ -20,9 +20,33 @@
       var okWrap = document.getElementById('fx-ok-wrap');
       var okMsg = document.getElementById('fx-ok-msg');
       var lastFocus = null;
+      var productoSel = document.getElementById('fx-producto');
+      var fileReq = document.getElementById('fx-file-req');
+      var fileHint = document.getElementById('fx-file-hint');
 
       function endpointReady() {
         return ENDPOINT && ENDPOINT !== PLACEHOLDER && /^https:\/\/script\.google\.com\//.test(ENDPOINT);
+      }
+
+      // El Medallero no necesita ruta (archivo/enlace); Ruta y Ambos sí.
+      function rutaEsObligatoria() {
+        var p = productoSel.value;
+        return p === 'Ruta' || p === 'Ambos';
+      }
+
+      // Refleja en la UI si el archivo/enlace es obligatorio segun el producto elegido.
+      function actualizarObligatoriedadRuta() {
+        var oblig = rutaEsObligatoria();
+        if (fileReq) fileReq.style.visibility = oblig ? 'visible' : 'hidden';
+        if (fileHint) {
+          fileHint.textContent = oblig
+            ? '* Obligatorio para pedidos con Ruta'
+            : 'Opcional para Medallero';
+        }
+      }
+      if (productoSel) {
+        productoSel.addEventListener('change', actualizarObligatoriedadRuta);
+        actualizarObligatoriedadRuta();
       }
 
       function openModal(producto) {
@@ -36,6 +60,7 @@
             if (sel.options[i].value === producto) { sel.selectedIndex = i; break; }
           }
         }
+        actualizarObligatoriedadRuta();
         var first = document.getElementById('fx-nombre');
         if (first) setTimeout(function () { first.focus(); }, 60);
       }
@@ -146,10 +171,10 @@
           notas: document.getElementById('fx-notas').value.trim()
         };
 
-        // Validación: el archivo NO es obligatorio, pero sí necesitamos la ruta
-        // de alguna forma (archivo O enlace de la actividad).
+        // Validación: el archivo/enlace solo es obligatorio si el pedido incluye Ruta
+        // (Ruta o Ambos). Un pedido de solo Medallero no necesita ninguno de los dos.
         var miss = null;
-        if (!chosen && !d.link) miss = { msg: 'Necesitamos tu ruta: sube el archivo o pega el enlace de tu actividad.', el: document.getElementById('fx-link') };
+        if (rutaEsObligatoria() && !chosen && !d.link) miss = { msg: 'Necesitamos tu ruta: sube el archivo o pega el enlace de tu actividad.', el: document.getElementById('fx-link') };
         else if (!d.nombre) miss = { msg: 'Falta tu nombre.', el: document.getElementById('fx-nombre') };
         else if (!d.whatsapp) miss = { msg: 'Falta tu WhatsApp para confirmarte el pedido.', el: document.getElementById('fx-wa') };
         else if (!d.ruta) miss = { msg: 'Dinos el nombre de la ruta o carrera.', el: document.getElementById('fx-ruta') };

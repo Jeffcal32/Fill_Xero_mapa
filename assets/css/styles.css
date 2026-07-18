@@ -80,10 +80,14 @@ body {
             margin: 0 auto;
         }
 
-        /* aire bajo el header fijo para que el titular no quede cortado */
+        /* aire bajo el header fijo para que el titular no quede cortado.
+           min-height:auto (en vez del 100vh de .scrolly-section): el contenido del
+           hero es mas bajo que la pantalla, y forzar 100vh dejaba una zona muerta de
+           scroll vacia antes de llegar a la animacion 3D (parecia que no habia nada mas). */
         #section-hero {
+            min-height: auto;
             padding-top: 96px;
-            padding-bottom: 24px;
+            padding-bottom: 48px;
         }
 
         #hero-img {
@@ -94,22 +98,13 @@ body {
             filter: drop-shadow(0 45px 60px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 50px rgba(212, 255, 69, 0.10));
         }
 
-        /* parrafo superpuesto en la banda vacia sobre el producto.
-           OJO: se centra con left/right+margin (NO con translateX) porque la
-           animacion .fade-up-enter usa transform y borraria el centrado. */
+        /* parrafo del hero: texto normal entre el titulo y la imagen del producto
+           (ya NO superpuesto sobre la imagen, para que nunca quede encima de ella). */
         .hero-para {
-            position: absolute;
-            top: 16%;
-            left: 0;
-            right: 0;
-            margin-left: auto;
-            margin-right: auto;
             width: 90%;
             max-width: 44rem;
-            z-index: 2;
-            pointer-events: none;
+            margin: 0.75rem auto 1.25rem;
             text-align: center;
-            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.95), 0 0 40px rgba(0, 0, 0, 0.8);
         }
 
         .hero-btns {
@@ -396,4 +391,23 @@ body {
     width: 1px;
     height: 1px;
     overflow: hidden;
+}
+
+/* Boton de Instagram en el header */
+.ig-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    color: #F4F4F0;
+    border: 1px solid rgba(244, 244, 240, 0.18);
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+.ig-btn:hover {
+    color: #D4FF45;
+    border-color: rgba(212, 255, 69, 0.6);
+    transform: scale(1.06);
 }

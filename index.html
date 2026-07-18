@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fill Xero | Tu logro, materializado</title>
+<link href="assets/img/favicon.svg" rel="icon" type="image/svg+xml"/>
+<script crossorigin="anonymous" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-fljlqkjWlmSFjkESkQvm77heIZpoWmXEOzlCA7kOpGUH+95Zk0yGfQieWM2q136E" referrerpolicy="no-referrer" src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script crossorigin="anonymous" integrity="sha384-d+vyQ0dYcymoP8ndq2hW7FGC50nqGdXUEgoOUGxbbkAJwZqL7h+jKN0GGgn9hFDS" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-poC0r6usQOX2Ayt/VGA+t81H6V3iN9L+Irz9iO8o+s0X20tLpzc9DOOtnKxhaQSE" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Space+Grotesk:wght@300;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="assets/css/tailwind.css" rel="stylesheet"/>
+<link href="assets/css/styles.css" rel="stylesheet"/>
+<noscript><style>.supa-card{opacity:1;transform:none}</style></noscript>
+</head>
+<body class="antialiased">
+<!-- Background Shader Canvas -->
+<canvas id="shader-canvas"></canvas>
+<!-- Header / TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-obsidian/30 backdrop-blur-xl border-b border-cream/10">
+<div class="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="h-8">
+<img alt="Fill Xero Logo" class="h-full object-contain" src="assets/img/fill-xero-logo.svg"/>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<div class="selector-item active" data-target="section-hero">Base</div>
+<div class="selector-item" data-target="section-relief">Relieve</div>
+<div class="selector-item" data-target="section-route">Ruta</div>
+<div class="selector-item" data-target="section-medal">Medallero</div>
+<div class="selector-item" data-target="section-collection">Colección</div>
+</nav>
+<button class="btn-cta-nav bg-neon-lime text-black neon-glow-primary transition-transform hover:scale-105 active:scale-95 fade-up-enter" data-cta="" style="animation-delay: 0.2s;" type="button">
+                Crea tu ruta ahora
+            </button>
+</div>
+</header>
+<!-- Scroll Container -->
+<main id="scrolly-trigger">
+<!-- Hero Section -->
+<section class="scrolly-section px-margin-mobile md:px-margin-desktop text-center" id="section-hero">
+<div class="w-full max-w-6xl mx-auto flex flex-col items-center">
+<h1 class="font-display-lg text-display-lg text-cream leading-tight fade-up-enter">
+                    Tu logro, materializado.
+                </h1>
+<!-- Imagen grande con el parrafo superpuesto encima -->
+<div class="relative w-full fade-up-enter" id="hero-product" style="animation-delay: 0.3s;">
+<img alt="Relieve topográfico 3D con ruta destacada sobre base hexagonal Fill Xero" id="hero-img" src="assets/img/combinado.png"/>
+<p class="hero-para font-body-lg text-body-lg text-cream/80 fade-up-enter" style="animation-delay: 0.1s;">
+                        Transformamos tus rutas más épicas en relieves topográficos de precisión milimétrica. El diseño industrial se encuentra con la pasión deportiva.
+                    </p>
+</div>
+<!-- Boton en la parte inferior -->
+<div class="hero-btns flex justify-center">
+<button class="btn-cta bg-neon-lime text-black transition-all hover:scale-105 active:scale-95 fade-up-enter" data-cta="Mapa personalizado" style="animation-delay: 0.4s;" type="button">
+                        Personalizar mi ruta
+                    </button>
+</div>
+</div>
+</section>
+<!-- Escena 3D pineada: BASE -> RELIEVE -> RUTA (scroll-driven) -->
+<section id="section-assembly">
+<div class="assembly-pin">
+<!-- Canvas 3D (desktop) -->
+<div id="assembly-3d"></div>
+<!-- Paso 1: Relieve — texto a la derecha -->
+<div class="astep astep-relieve" data-step="relieve">
+<div class="astep-inner">
+<div class="astep-media" style="background-image: url('assets/img/relieve.png')"></div>
+<span class="font-label-caps text-label-caps text-neon-lime tracking-[0.2em]">PASO 1: TOPOGRAFÍA</span>
+<h2 class="font-headline-lg text-headline-lg text-cream mt-4">Ensamblaje del Relieve: Tu terreno en 3D.</h2>
+<p class="font-body-lg text-body-lg text-cream/70 mt-4">
+                        El primer paso es recrear la topografía exacta de tu desafío. Utilizamos datos geoespaciales para esculpir cada montaña y valle con precisión.
+                    </p>
+</div>
+</div>
+<!-- Paso 2: Ruta — texto a la izquierda -->
+<div class="astep astep-ruta" data-step="ruta">
+<div class="astep-inner">
+<div class="astep-media" style="background-image: url('assets/img/ruta_flotando.png')"></div>
+<span class="font-label-caps text-label-caps text-neon-lime tracking-[0.2em]">PASO 2: EL CAMINO</span>
+<h2 class="font-headline-lg text-headline-lg text-cream mt-4">La Ruta: Tu trayectoria, destacada.</h2>
+<p class="font-body-lg text-body-lg text-cream/70 mt-4">
+                        Sobre el relieve, insertamos la ruta exacta que recorriste. Una línea continua que corona la topografía, haciendo visible tu esfuerzo.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature 3: Medal -->
+<section class="scrolly-section px-margin-mobile md:px-margin-desktop" id="section-medal">
+<div class="max-w-container-max mx-auto w-full grid md:grid-cols-2 items-center gap-16">
+<div class="glass-surface p-8 rounded-3xl border border-cream/5 relative overflow-hidden group supa-card">
+<div class="aspect-[16/9] product-shot rounded-2xl tilt-card" data-alt="Sistema modular del medallero: disco con cierre giratorio y placa hexagonal" style="background-image: url('assets/img/medallero_original.png')"></div>
+</div>
+<div class="space-y-6">
+<span class="font-label-caps text-label-caps text-neon-lime tracking-[0.2em] fade-up-enter">SISTEMA GIRATORIO</span>
+<h2 class="font-headline-lg text-headline-lg text-cream fade-up-enter" style="animation-delay: 0.1s;">Modularidad Infinita: Cambia entre medallero o relieve en segundos.</h2>
+<p class="font-body-lg text-body-lg text-cream/70 fade-up-enter" style="animation-delay: 0.2s;">
+                        Nuestro diseño modular te permite intercambiar el núcleo de tu pieza: gira para desbloquear, cambia el módulo y gira para cerrar. De un mapa de relieve a un soporte de medallas sin herramientas.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Feature 4: Hexagonal Collection -->
+<section class="scrolly-section px-margin-mobile md:px-margin-desktop" id="section-collection">
+<div class="max-w-container-max mx-auto w-full text-center space-y-12">
+<div class="max-w-2xl mx-auto space-y-6">
+<span class="font-label-caps text-label-caps text-neon-lime tracking-[0.2em] fade-up-enter">CRECE CONTIGO</span>
+<h2 class="font-headline-lg text-headline-lg text-cream fade-up-enter" style="animation-delay: 0.1s;">Colecciónate: Bases hexagonales que encajan perfectamente.</h2>
+<p class="font-body-lg text-body-lg text-cream/70 fade-up-enter" style="animation-delay: 0.2s;">
+                        Crea un mural de tus victorias. El patrón hexagonal permite expansiones infinitas, convirtiendo tu pared en un testimonio de perseverancia.
+                    </p>
+</div>
+<!-- Product Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12 max-w-4xl mx-auto">
+<!-- Product Card 2 -->
+<div class="glass-surface p-8 rounded-3xl border border-cream/10 hover:border-neon-lime/50 transition-all duration-500 flex flex-col items-center text-center group supa-card" style="animation-delay: 0.1s;">
+<div class="card-media w-full aspect-square rounded-2xl mb-8 overflow-hidden">
+<img alt="Relieve topográfico con ruta destacada, vista lateral" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500" src="assets/img/relieve_ruta_original.png"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-cream mb-2">Relieve y Ruta</h3>
+<p class="font-body-md text-body-md text-cream/70 mb-6">La combinación perfecta de topografía y trayectoria.</p>
+<button class="mt-auto w-full py-4 rounded-xl bg-cream/5 border border-cream/10 text-neon-lime font-label-caps text-label-caps hover:bg-neon-lime hover:text-black transition-all" data-cta="Mapa personalizado" type="button">Ordenar ahora</button>
+</div>
+<!-- Product Card 3 -->
+<div class="glass-surface p-8 rounded-3xl border border-cream/10 hover:border-neon-lime/50 transition-all duration-500 flex flex-col items-center text-center group supa-card" style="animation-delay: 0.2s;">
+<div class="card-media w-full aspect-square rounded-2xl mb-8 overflow-hidden">
+<img alt="Porta medallas modular negro con cierre giratorio" class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500" src="assets/img/medallero_original.png"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-cream mb-2">Porta Medallas</h3>
+<p class="font-body-md text-body-md text-cream/70 mb-6">Dale a tu metal el pedestal que se merece.</p>
+<button class="mt-auto w-full py-4 rounded-xl bg-cream/5 border border-cream/10 text-neon-lime font-label-caps text-label-caps hover:bg-neon-lime hover:text-black transition-all" data-cta="Porta Medallas" type="button">Ordenar ahora</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal de pedido: recibe el .gpx + datos, registra y cierra por WhatsApp -->
+<div aria-hidden="true" aria-labelledby="fx-modal-title" class="fx-modal" id="fx-order-modal" role="dialog">
+<div class="fx-modal__backdrop" data-fx-close=""></div>
+<div class="fx-modal__panel">
+<button aria-label="Cerrar" class="fx-modal__close" data-fx-close="" type="button">×</button>
+<div id="fx-form-wrap">
+<h3 class="font-headline-md text-cream" id="fx-modal-title" style="font-size:21px;line-height:1.2;">Personaliza tu ruta</h3>
+<p class="font-body-md text-cream/60 mb-3" style="font-size:13px;margin-top:2px;">Mándanos tu ruta y te confirmamos por WhatsApp.</p>
+<form id="fx-order-form" novalidate="">
+<!-- Honeypot anti-bots: invisible para humanos; si se llena, se descarta el envío -->
+<div aria-hidden="true" class="fx-hp">
+<label for="fx-website">No llenar este campo</label>
+<input autocomplete="off" id="fx-website" name="website" tabindex="-1" type="text"/>
+</div>
+<div class="fx-field" style="margin-bottom:0">
+<label for="fx-file">Tu ruta — sube el archivo (.gpx, .kml, .tcx)</label>
+<label class="fx-drop" for="fx-file" id="fx-drop">
+<input accept=".gpx,.kml,.tcx,application/gpx+xml" id="fx-file" name="file" type="file"/>
+<div class="font-body-md text-body-md text-cream/80" id="fx-drop-text">
+                        Arrastra tu archivo aquí o <span class="text-neon-lime">búscalo</span>
+                    </div>
+</label>
+</div>
+<div class="fx-or">o</div>
+<div class="fx-field">
+<label for="fx-link">Pega el enlace de tu actividad</label>
+<input id="fx-link" name="link" placeholder="https://connect.garmin.com/app/activity/…" type="url"/>
+</div>
+<div class="fx-row">
+<div class="fx-field">
+<label for="fx-nombre">Tu nombre *</label>
+<input id="fx-nombre" name="nombre" type="text"/>
+</div>
+<div class="fx-field">
+<label for="fx-wa">WhatsApp *</label>
+<input id="fx-wa" inputmode="tel" name="whatsapp" type="tel"/>
+</div>
+</div>
+<div class="fx-row">
+<div class="fx-field">
+<label for="fx-ruta">Nombre de la ruta o carrera *</label>
+<input id="fx-ruta" name="ruta" placeholder="Ej: Maratón de Bogotá 2026" type="text"/>
+</div>
+<div class="fx-field">
+<label for="fx-producto">Producto</label>
+<select id="fx-producto" name="producto">
+<option value="Mapa personalizado">Mapa personalizado</option>
+<option value="Porta Medallas">Porta Medallas</option>
+<option value="Ambos">Ambos</option>
+</select>
+</div>
+</div>
+<div class="fx-row">
+<div class="fx-field">
+<label for="fx-email">Email (opcional)</label>
+<input id="fx-email" name="email" type="email"/>
+</div>
+<div class="fx-field">
+<label for="fx-notas">Notas (opcional)</label>
+<textarea id="fx-notas" name="notas" placeholder="Colores, fecha, dedicatoria…"></textarea>
+</div>
+</div>
+<div class="fx-err" id="fx-error"></div>
+<button class="btn-cta bg-neon-lime text-black w-full transition-all hover:scale-[1.02] active:scale-95" id="fx-submit" type="submit">
+                    Enviar y continuar en WhatsApp
+                </button>
+</form>
+</div>
+<div class="fx-ok" hidden="" id="fx-ok-wrap">
+<div class="fx-ok__ring">✓</div>
+<h3 class="font-headline-md text-headline-md text-cream mb-2">¡Pedido recibido!</h3>
+<p class="font-body-md text-body-md text-cream/70 mb-6" id="fx-ok-msg">Te abrimos WhatsApp para confirmar los detalles.</p>
+<button class="btn-cta-nav bg-neon-lime text-black" data-fx-close="" type="button">Cerrar</button>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-obsidian w-full py-12 relative z-20 border-t border-cream/10">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-8">
+<div class="h-10">
+<img alt="Fill Xero Logo" class="h-full object-contain" src="assets/img/fill-xero-logo.svg"/>
+</div>
+<div class="flex gap-8">
+<a class="font-label-caps text-label-caps text-cream/60 hover:text-neon-lime transition-colors" href="#">NFC Technology</a>
+<a class="font-label-caps text-label-caps text-cream/60 hover:text-neon-lime transition-colors" href="#">Assembly Guide</a>
+<a class="font-label-caps text-label-caps text-cream/60 hover:text-neon-lime transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-cream/60 hover:text-neon-lime transition-colors" href="#">Shipping</a>
+</div>
+<div class="font-label-caps text-label-caps text-neon-lime opacity-80">
+                © 2024 FILL XERO. ALL RIGHTS RESERVED.
+            </div>
+</div>
+</footer>
+<!-- WebGL Background Shader Script -->
+<script src="assets/js/background-shader.js"></script>
+<!-- Interaccion del producto real (fotos) -->
+<script src="assets/js/hero.js"></script>
+<!-- Ensamblaje 3D pineado: BASE -> RELIEVE -> RUTA, dirigido por scroll -->
+<script src="assets/js/assembly.js"></script>
+<!-- Toma de pedido: .gpx + datos -> backend (Apps Script) -> handoff a WhatsApp -->
+<script src="assets/js/order-form.js"></script>
+<!-- Scripts for GSAP Animations -->
+<script src="assets/js/ui.js"></script>
+</body></html>

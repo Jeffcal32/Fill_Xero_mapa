@@ -1,0 +1,399 @@
+body {
+            background-color: #0A0A0A;
+            color: #F4F4F0;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-display-lg, .font-headline-lg, .font-headline-md, .font-label-caps {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass-surface {
+            background: rgba(244, 244, 240, 0.03);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(244, 244, 240, 0.1);
+        }
+
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(212, 255, 69, 0.4);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(212, 255, 69, 0.5);
+        }
+
+        .scrolly-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Fade-up animation for headings and buttons */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up-enter {
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        /* Card reveal via IntersectionObserver + CSS (sin dependencia de rAF/GSAP) */
+        .supa-card {
+            opacity: 0;
+            transform: translateY(48px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+
+        .supa-card.in {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Shader canvas */
+        #shader-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Producto real: escenario interactivo del hero */
+        #hero-product {
+            perspective: 1200px;
+            width: min(760px, 88vw);
+            margin: 0 auto;
+        }
+
+        /* aire bajo el header fijo para que el titular no quede cortado */
+        #section-hero {
+            padding-top: 96px;
+            padding-bottom: 24px;
+        }
+
+        #hero-img {
+            width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            will-change: transform;
+            filter: drop-shadow(0 45px 60px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 50px rgba(212, 255, 69, 0.10));
+        }
+
+        /* parrafo superpuesto en la banda vacia sobre el producto.
+           OJO: se centra con left/right+margin (NO con translateX) porque la
+           animacion .fade-up-enter usa transform y borraria el centrado. */
+        .hero-para {
+            position: absolute;
+            top: 16%;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            max-width: 44rem;
+            z-index: 2;
+            pointer-events: none;
+            text-align: center;
+            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.95), 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-btns {
+            margin-top: -1.5rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        /* ===== CTAs: visibles pero acordes al resto de la landing ===== */
+        /* CTA principal del hero */
+        .btn-cta {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: clamp(13px, 0.95vw, 15px);
+            line-height: 1;
+            padding: 1rem 2.4rem;
+            border-radius: 9999px;
+            box-shadow: 0 0 16px rgba(212, 255, 69, 0.3), 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-cta:hover {
+            box-shadow: 0 0 26px rgba(212, 255, 69, 0.45), 0 10px 24px rgba(0, 0, 0, 0.45);
+        }
+
+        /* CTA del header */
+        .btn-cta-nav {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 12px;
+            line-height: 1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+        }
+
+        #hero-product {
+            margin-top: 0.25rem;
+        }
+
+        /* Halo neon bajo el producto */
+        #hero-product::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -6%;
+            width: 62%;
+            height: 60px;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse at center, rgba(212, 255, 69, 0.18), transparent 70%);
+            filter: blur(14px);
+            pointer-events: none;
+        }
+
+        /* Fotos de producto en tarjetas: recorte transparente centrado */
+        .product-shot {
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .tilt-card {
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* recuadro de imagen de las tarjetas de coleccion: fondo integrado, no gris plano */
+        .card-media {
+            background:
+                radial-gradient(120% 90% at 50% 15%, rgba(212, 255, 69, 0.06), transparent 55%),
+                linear-gradient(160deg, rgba(244, 244, 240, 0.05), rgba(10, 10, 10, 0.15));
+            border: 1px solid rgba(244, 244, 240, 0.06);
+        }
+
+        /* ====== Escenario 3D pineado (scrollytelling) — movil y desktop ====== */
+        #section-assembly { position: relative; }
+
+        .assembly-pin {
+            position: relative;
+            height: 100vh;
+            height: 100svh;   /* evita el salto cuando iOS oculta/muestra la barra */
+            overflow: hidden;
+        }
+
+        #assembly-3d {
+            display: block;
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* MOVIL: el modelo va arriba y el texto abajo, sobre un degradado legible */
+        .astep {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 var(--gutter, 24px) 9vh;
+            opacity: 0;              /* GSAP controla la visibilidad */
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .astep::before {
+            content: '';
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.94), rgba(10, 10, 10, 0.65) 42%, transparent);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .astep-inner { max-width: 34rem; width: 100%; }
+        .astep h2 { font-size: clamp(26px, 6.4vw, 48px); line-height: 1.15; }
+        .astep p  { font-size: clamp(14px, 3.5vw, 18px); }
+
+        .astep-media {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 1.5rem;
+            display: none;           /* con el 3D activo no se usa */
+        }
+
+        @media (min-width: 768px) {
+            /* DESKTOP: texto a un lado, modelo al otro */
+            .astep {
+                align-items: center;
+                padding: 0 var(--margin-desktop, 80px);
+            }
+            .astep::before { display: none; }
+            .astep-relieve { justify-content: flex-end; text-align: left; }
+            .astep-ruta    { justify-content: flex-start; text-align: left; }
+        }
+
+        /* Respaldo sin WebGL: paneles apilados y estaticos con su foto */
+        #section-assembly.no-3d .assembly-pin { height: auto; overflow: visible; }
+        #section-assembly.no-3d #assembly-3d { display: none; }
+        #section-assembly.no-3d .astep {
+            position: relative; inset: auto; opacity: 1; display: block;
+            max-width: 640px; margin: 0 auto; padding: 3rem var(--gutter, 24px);
+        }
+        #section-assembly.no-3d .astep::before { display: none; }
+        #section-assembly.no-3d .astep-media { display: block; }
+
+        /* espacio abajo para que las tarjetas no se crucen con el footer */
+        #section-collection {
+            padding-bottom: 7rem;
+        }
+
+        /* ================= Modal de pedido (.gpx -> backend -> WhatsApp) ================= */
+        .fx-modal { position: fixed; inset: 0; z-index: 100; display: none; }
+        .fx-modal.is-open { display: block; }
+        .fx-modal__backdrop { position: absolute; inset: 0; background: rgba(4, 4, 4, 0.82); }
+        .fx-modal__panel {
+            position: relative;
+            width: min(620px, 94vw);
+            margin: 3vh auto;
+            max-height: 94vh;
+            overflow-y: auto;
+            background: #101114;
+            border: 1px solid rgba(212, 255, 69, 0.25);
+            border-radius: 24px;
+            padding: 1.25rem 1.6rem 1.4rem;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 40px rgba(212, 255, 69, 0.08);
+            /* sin barra de scroll visible (sigue siendo desplazable en pantallas cortas) */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .fx-modal__panel::-webkit-scrollbar { width: 0; height: 0; display: none; }
+        .fx-modal__close {
+            position: absolute; top: 14px; right: 16px;
+            background: none; border: 0; color: #8f937b; font-size: 26px; line-height: 1;
+            cursor: pointer; padding: 4px 8px; border-radius: 8px;
+        }
+        .fx-modal__close:hover { color: #D4FF45; }
+        .fx-field { margin-bottom: 0.5rem; }
+        .fx-field label {
+            display: block; margin-bottom: 3px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 10.5px; font-weight: 700;
+            letter-spacing: 0.09em; text-transform: uppercase; color: #D4FF45;
+        }
+        .fx-field input, .fx-field select, .fx-field textarea {
+            width: 100%; box-sizing: border-box;
+            background: rgba(244, 244, 240, 0.04);
+            border: 1px solid rgba(244, 244, 240, 0.14);
+            border-radius: 11px; padding: 9px 12px;
+            color: #F4F4F0; font-family: 'Inter', sans-serif; font-size: 16px;
+        }
+        .fx-field textarea { min-height: 50px; resize: vertical; }
+        .fx-field input:focus, .fx-field select:focus, .fx-field textarea:focus {
+            outline: none; border-color: rgba(212, 255, 69, 0.6);
+            box-shadow: 0 0 0 3px rgba(212, 255, 69, 0.12);
+        }
+        .fx-field select option { background: #15171a; color: #F4F4F0; }
+        .fx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        @media (max-width: 520px) { .fx-row { grid-template-columns: 1fr; } }
+        .fx-drop {
+            border: 1.5px dashed rgba(212, 255, 69, 0.4); border-radius: 12px;
+            padding: 0.65rem; text-align: center; cursor: pointer;
+            background: rgba(212, 255, 69, 0.03); transition: all 0.25s ease;
+        }
+        /* separador "o" entre archivo y enlace */
+        .fx-or {
+            display: flex; align-items: center; gap: 10px;
+            margin: 0.4rem 0; color: #8f937b;
+            font-family: 'Space Grotesk', sans-serif; font-size: 10px;
+            font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+        }
+        .fx-or::before, .fx-or::after {
+            content: ''; flex: 1; height: 1px; background: rgba(244, 244, 240, 0.1);
+        }
+        .fx-drop:hover, .fx-drop.is-over { border-color: #D4FF45; background: rgba(212, 255, 69, 0.08); }
+        .fx-drop.has-file { border-style: solid; border-color: rgba(61, 220, 151, 0.7); background: rgba(61, 220, 151, 0.07); }
+        .fx-drop input[type=file] { display: none; }
+        .fx-err { color: #ffb4ab; font-size: 13px; margin-top: 8px; min-height: 18px; }
+        .fx-ok { text-align: center; padding: 1rem 0; }
+        .fx-ok__ring {
+            width: 66px; height: 66px; margin: 0 auto 1rem; border-radius: 50%;
+            border: 2px solid #D4FF45; display: flex; align-items: center; justify-content: center;
+            color: #D4FF45; font-size: 30px;
+        }
+
+        /* Product Selector Sticky Menu */
+        .sticky-selector {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 255, 69, 0.3);
+            border-radius: 9999px;
+            padding: 8px 24px;
+            display: flex;
+            gap: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 255, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sticky-selector:hover {
+            border-color: rgba(212, 255, 69, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(212, 255, 69, 0.2);
+        }
+
+        .selector-item {
+            color: #F4F4F0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .selector-item:hover, .selector-item.active {
+            color: #D4FF45;
+        }
+
+        .selector-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #D4FF45;
+            box-shadow: 0 0 8px rgba(212, 255, 69, 0.6);
+        }
+
+/* Honeypot anti-spam: oculto para humanos, "visible" para bots (no usar display:none) */
+.fx-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

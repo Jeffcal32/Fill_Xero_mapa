@@ -1,0 +1,26 @@
+# --- Archivos de sistema / editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+
+# --- Respaldos temporales ---
+*.bak
+*.tmp
+index.html.bak
+
+# --- Fuentes 3D crudas de Blender (NO se usan en el sitio; son pesadas) ---
+# El sitio solo usa base_web.glb, relieve.glb y ruta.glb.
+assets/models/*.stl
+assets/models/base.glb
+
+# --- Bundle base64 de modelos (~2MB) ---
+# El sitio ahora carga los .glb por red; este archivo solo servía para abrir
+# el HTML con doble clic (file://). Se mantiene local pero no se publica.
+assets/models/models_embedded.js
+
+# --- Dependencias (por si en el futuro se agrega un build de Tailwind) ---
+node_modules/
+dist/

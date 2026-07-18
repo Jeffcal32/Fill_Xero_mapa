@@ -9,6 +9,15 @@ body {
             font-family: 'Space Grotesk', sans-serif;
         }
 
+        /* El titulo del hero usa text-display-lg (Tailwind) a 72px FIJO, sin adaptarse
+           a pantallas angostas: en movil el texto era mas ancho que el viewport y se
+           cortaba (la "M" de "materializado" quedaba fuera de pantalla). Fluido en vez
+           de fijo; en escritorio (>=800px de ancho) el clamp llega exacto a 72px, sin
+           ningun cambio visual ahi. */
+        #section-hero h1 {
+            font-size: clamp(32px, 9vw, 72px);
+        }
+
         .glass-surface {
             background: rgba(244, 244, 240, 0.03);
             backdrop-filter: blur(20px);

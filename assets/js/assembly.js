@@ -140,6 +140,20 @@
 
         const hold = { v: 0 };
 
+        // Visibilidad de los textos: NO se anima dentro de los timelines con scrub
+        // (eso fue la causa del bug "se ven los dos textos"). Cada timeline con scrub
+        // tiene su propio suavizado/retraso; al scrollear muy rapido o revertir de
+        // golpe, los dos suavizados (entrada y pin) se desincronizan un instante y
+        // ambos textos quedan a medio aparecer/desaparecer AL MISMO TIEMPO.
+        // Fix: la opacidad se calcula siempre a partir del progreso REAL del scroll
+        // (self.progress, inmediato, sin retraso) y se aplica con gsap.set (instantaneo),
+        // asi es matematicamente imposible que ambos textos queden visibles a la vez.
+        const clamp01 = (v) => Math.max(0, Math.min(1, v));
+        const MASTER_DUR = 7.7;   // duracion total interna del timeline del pin (ver mas abajo)
+
+        function setRelieveOpacity(v) { gsap.set('.astep-relieve', { autoAlpha: v }); }
+        function setRutaOpacity(v) { gsap.set('.astep-ruta', { autoAlpha: v }); }
+
         // FASE 1 — ENTRADA (sin pin): mientras la seccion sube a la pantalla, la base
         // cae y aparece el texto del Paso 1. Asi, apenas la seccion llena la pantalla,
         // YA hay contenido y no queda esa zona vacia que parecia "fin de pagina".
@@ -149,11 +163,14 @@
             trigger: '#section-assembly',
             start: 'top bottom',   // desde que asoma por abajo
             end: 'top top',        // hasta quedar alineada arriba (justo antes del pin)
-            scrub: 1
+            scrub: 1,
+            onUpdate: (self) => {
+              // el texto empieza a aparecer solo en la segunda mitad de la entrada
+              setRelieveOpacity(clamp01((self.progress - 0.45) / 0.55));
+            }
           }
         })
-          .to(parts.base.position, { y: 0, ease: 'power2.out' }, 0)
-          .to('.astep-relieve', { autoAlpha: 1 }, 0.45);
+          .to(parts.base.position, { y: 0, ease: 'power2.out' }, 0);
 
         // FASE 2 — PIN (armado): la seccion se bloquea y la rueda arma el resto:
         // el relieve se ensambla, transicion, y la ruta corona con fade suave.
@@ -171,6 +188,11 @@
             onRefreshInit: () => { layout(); },
             onUpdate: (self) => {
               setNav(self.progress < 0.45 ? 'section-relief' : 'section-route');
+              // Opacidad de los dos textos calculada directo del progreso real
+              // (self.progress), NO del timeline con scrub -> sin retraso, sin cruce.
+              const t = self.progress * MASTER_DUR;
+              setRelieveOpacity(1 - clamp01((t - 2.5) / 0.5));   // 1 hasta 2.5, fade-out 2.5->3.0
+              setRutaOpacity(clamp01((t - 3.5) / 0.6));          // 0 hasta 3.5, fade-in 3.5->4.1
             },
             onLeave: () => setNav('section-route'),
             onLeaveBack: () => setNav('section-hero')
@@ -181,10 +203,8 @@
           // el terreno se ensambla sobre la base (que ya cayo en la fase de entrada)
           .to(parts.relieve.position, { y: 0, duration: 1.3, ease: 'power2.out' }, 0.0)
           // (hueco 1.3 -> 2.5 = lectura del paso 1, todo quieto)
-          // TRANSICION suave a RUTA: sale texto, el modelo se desliza a la derecha, entra texto
-          .to('.astep-relieve', { autoAlpha: 0, duration: 0.5 }, 2.5)
+          // TRANSICION: el modelo se desliza a la derecha (el cruce de textos lo maneja el onUpdate de arriba)
           .fromTo(root.position, { x: () => LEFT_X }, { x: () => RIGHT_X, duration: 1.3, ease: 'power2.inOut' }, 2.6)
-          .to('.astep-ruta', { autoAlpha: 1, duration: 0.6 }, 3.5)
           // ESTADO RUTA: la ruta aparece con FADE-IN suave + asentamiento (sin brinco)
           .to(mats.ruta, { opacity: 1, duration: 1.9, ease: 'power1.inOut' }, 4.0)
           .fromTo(parts.ruta.position, { y: 34 }, { y: 0, duration: 1.9, ease: 'power2.out' }, 4.0)
